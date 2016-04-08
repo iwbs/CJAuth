@@ -16,7 +16,7 @@ import org.springframework.security.oauth2.config.annotation.web.configuration.R
 import org.springframework.security.oauth2.config.annotation.web.configurers.AuthorizationServerEndpointsConfigurer;
 import org.springframework.security.oauth2.config.annotation.web.configurers.ResourceServerSecurityConfigurer;
 import org.springframework.security.oauth2.provider.token.TokenStore;
-import org.springframework.security.oauth2.provider.token.store.InMemoryTokenStore;
+import org.springframework.security.oauth2.provider.token.store.JdbcTokenStore;
 
 @Configuration
 public class OAuth2ServerConfiguration {
@@ -36,6 +36,9 @@ public class OAuth2ServerConfiguration {
 		public void configure(HttpSecurity http) throws Exception {
 			// @formatter:off
 			http.authorizeRequests()
+			.antMatchers("/mirror").permitAll()
+			.antMatchers("/forward").permitAll()
+			.antMatchers("/redirect").permitAll()
 			.antMatchers("/hello").permitAll()
 			.antMatchers("/admin").hasRole("ADMIN")
 			.anyRequest().authenticated();
@@ -68,18 +71,18 @@ public class OAuth2ServerConfiguration {
 			clients.jdbc(dataSource);
 		}
 
-		// @Bean
-		// public JdbcTokenStore tokenStore() {
-		// return new JdbcTokenStore(dataSource);
-		// }
+		 @Bean
+		 public JdbcTokenStore tokenStore() {
+		 return new JdbcTokenStore(dataSource);
+		 }
 
 		@Autowired
 		private TokenStore tokenStore;
 
-		@Bean
-		public TokenStore tokenStore() {
-			return new InMemoryTokenStore();
-		}
+//		@Bean
+//		public TokenStore tokenStore() {
+//			return new InMemoryTokenStore();
+//		}
 
 		@Override
 		public void configure(AuthorizationServerEndpointsConfigurer endpoints) throws Exception {

@@ -1,7 +1,5 @@
 package com.joe.jauth.config;
 
-import java.beans.PropertyVetoException;
-
 import javax.sql.DataSource;
 
 import org.springframework.context.annotation.Bean;
@@ -12,7 +10,9 @@ import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 
-import com.mchange.v2.c3p0.ComboPooledDataSource;
+import com.zaxxer.hikari.HikariConfig;
+import com.zaxxer.hikari.HikariDataSource;
+
 
 @Configuration
 @ComponentScan("com.joe.jauth")
@@ -22,16 +22,14 @@ public class WebConfig {
 
 	@Bean
 	public DataSource dataSource() {
-		ComboPooledDataSource dataSource = new ComboPooledDataSource();
-		try {
-			dataSource.setDriverClass("com.mysql.jdbc.Driver");
-			dataSource.setJdbcUrl("jdbc:mysql://localhost:3306/oauthdb");
-			dataSource.setUser("root");
-			dataSource.setPassword("");
-		} catch (PropertyVetoException e) {
-			e.printStackTrace();
-		}
-
+		
+		HikariConfig hikariConfig = new HikariConfig();
+	    hikariConfig.setDriverClassName("com.mysql.jdbc.Driver");
+	    hikariConfig.setJdbcUrl("jdbc:mysql://localhost:3306/oauthdb"); 
+	    hikariConfig.setUsername("root");
+	    hikariConfig.setPassword("");
+	    
+	    HikariDataSource dataSource = new HikariDataSource(hikariConfig);
 		return dataSource;
 	}
 
